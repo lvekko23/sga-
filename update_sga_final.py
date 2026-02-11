@@ -1,12 +1,12 @@
 import os
 
-# Configuración Final con cambios de texto y contacto
+# Configuración Final con optimización SEO para conversiones locales
 files = {
     "src/lib/constants.ts": """
 export const COMPANY_INFO = {
-  name: "SGA",
+  name: "SGA Fumigaciones",
   phone: "+54 9 11 3448-4723",
-  whatsappUrl: "https://wa.me/5491134484723",
+  whatsappUrl: "https://wa.me/5491134484723?text=Hola,%20necesito%20un%20presupuesto%20para%20una%20fumigación.",
   email: "sga.fumigaciones@gmail.com",
   // Dirección vacía para que no aparezca
   address: "",
@@ -19,66 +19,70 @@ export const MENU_ITEMS = [
   { name: "Nosotros", href: "/#nosotros" },
   { name: "Contacto", href: "/#contacto" },
 ];
-
-export const SERVICES = [
-  { id: "insectos", title: "Insectos", description: "Gel sin olor." },
-  { id: "roedores", title: "Roedores", description: "Cebos seguros." },
-];
 """,
     "src/app/page.tsx": """
+import { Metadata } from 'next';
 import { ShieldCheck, Bug, Rat, Trees } from 'lucide-react';
 import { COMPANY_INFO } from '@/lib/constants';
+
+// --- CONFIGURACIÓN SEO (VITAL PARA GOOGLE Y ADS) ---
+export const metadata: Metadata = {
+  title: 'SGA Fumigaciones | Control de Plagas en Luján y Zona Oeste',
+  description: 'Servicio de urgencia en fumigación y control de plagas en Luján. Desratización, cucarachas y hormigas para hogares, campos y comercios. ¡Presupuesto sin cargo!',
+  keywords: 'fumigaciones en lujan, control de plagas lujan, desratizacion, fumigar cucarachas, SGA fumigaciones zona oeste',
+};
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-16 pb-10 bg-white">
-      {/* Hero Section */}
+      {/* Hero Section - Optimizada para conversión */}
       <section className="relative bg-green-700 text-white py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
         <div className="relative container mx-auto text-center max-w-3xl">
-          <span className="inline-block py-1 px-3 rounded-full bg-green-800 text-green-100 text-sm font-semibold mb-4 border border-green-600">
-            SGA - Soluciones Ambientales
+          <span className="inline-block py-1 px-3 rounded-full bg-green-800 text-green-100 text-sm font-bold mb-4 border border-green-500 uppercase tracking-wide">
+            Especialistas en la zona
           </span>
+          {/* H1 con palabras clave exactas que busca el usuario */}
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-            Control de Plagas <br/>
-            <span className="text-green-200">Efectivo y Seguro</span>
+            Fumigaciones y <br/> Control de Plagas <br/>
+            <span className="text-green-300">en Luján</span>
           </h1>
           <p className="text-xl md:text-2xl text-green-50 mb-8 font-light">
-            Protegemos tu hogar, campo y negocio. Especialistas en desinfección y erradicación total.
+            Solucionamos tu problema hoy. Servicio rápido y seguro para hogares, comercios y campos.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href={COMPANY_INFO.whatsappUrl} className="bg-white text-green-700 hover:bg-green-50 font-bold py-4 px-8 rounded-lg text-lg transition shadow-lg">
-              Pedir Presupuesto
+            <a href={COMPANY_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer" className="bg-white text-green-800 hover:bg-green-50 font-extrabold py-4 px-8 rounded-lg text-lg transition shadow-xl transform hover:-translate-y-1">
+              📲 Pedir Presupuesto Ya
             </a>
-            <a href="#servicios" className="bg-green-800 hover:bg-green-900 text-white border border-green-600 font-bold py-4 px-8 rounded-lg text-lg transition">
+            <a href="#servicios" className="bg-green-800 hover:bg-green-900 text-white border border-green-500 font-bold py-4 px-8 rounded-lg text-lg transition">
               Ver Servicios
             </a>
           </div>
         </div>
       </section>
 
-      {/* Servicios Actualizados */}
+      {/* Servicios Actualizados con SEO local */}
       <section id="servicios" className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-4 text-green-900">Nuestros Servicios</h2>
-        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Utilizamos productos de primera línea, autorizados y amigables con el medio ambiente.</p>
+        <h2 className="text-3xl font-bold text-center mb-4 text-green-900">Nuestros Servicios de Fumigación</h2>
+        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Utilizamos productos de primera línea, autorizados y seguros para tu familia y mascotas.</p>
         
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { 
-              title: "Insectos", 
+              title: "Control de Insectos", 
               icon: Bug, 
-              desc: "Control total de cucarachas, hormigas, arañas y mosquitos. Aplicación de gel sin olor y sin desalojar." 
+              desc: "Erradicación de cucarachas, hormigas, arañas y mosquitos. Aplicación de gel sin olor, no hace falta abandonar la casa." 
             },
             { 
-              title: "Roedores", 
+              title: "Desratización", 
               icon: Rat, 
-              desc: "Desratización efectiva y segura para mascotas y niños mediante estaciones de cebado profesionales." 
+              desc: "Eliminación de roedores efectiva y segura mediante estaciones de cebado profesionales. Ideal para hogares y galpones." 
             },
             { 
               title: "Campos y Exteriores", 
               icon: Trees, 
-              desc: "Fumigación de campos, parques y jardines. Control de plagas en grandes superficies abiertas." 
+              desc: "Fumigación de grandes extensiones, parques, jardines y fábricas. Control preventivo y reactivo de plagas." 
             },
           ].map((s, i) => (
             <div key={i} className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition border border-green-100 group">
@@ -96,9 +100,9 @@ export default function Home() {
       <section className="bg-green-50 py-16 border-y border-green-100">
         <div className="container mx-auto px-4 text-center">
           <ShieldCheck className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-4 text-green-900">Tu tranquilidad es nuestra prioridad</h2>
+          <h2 className="text-3xl font-bold mb-4 text-green-900">Trabajos con Garantía Escrita</h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            En <strong>{COMPANY_INFO.name}</strong>, todos nuestros trabajos cuentan con garantía escrita.
+            En <strong>{COMPANY_INFO.name}</strong> nuestra prioridad es tu tranquilidad. Resolvemos el problema de raíz.
           </p>
         </div>
       </section>
@@ -115,19 +119,19 @@ export default function Footer() {
       <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
         <div>
           <h3 className="text-2xl font-bold text-white mb-4">{COMPANY_INFO.name}</h3>
-          <p className="text-green-200">Expertos en control de plagas y fumigación de campos. Cuidamos lo que más te importa.</p>
+          <p className="text-green-200">Expertos en control de plagas y fumigaciones en Luján y zonas aledañas. Cuidamos tu espacio.</p>
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white mb-4">Contacto</h3>
+          <h3 className="text-xl font-bold text-white mb-4">Contacto Directo</h3>
           {/* Dirección eliminada a pedido */}
           <a href={`tel:${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition text-lg font-semibold">{COMPANY_INFO.phone}</a>
           <p className="text-green-200">{COMPANY_INFO.email}</p>
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white mb-4">Horarios</h3>
+          <h3 className="text-xl font-bold text-white mb-4">Atención</h3>
           <p>{COMPANY_INFO.schedule}</p>
           <div className="mt-4 inline-block bg-green-800 px-3 py-1 rounded-md border border-green-700">
-             <span className="text-green-300 font-semibold">Urgencias 24hs</span>
+             <span className="text-green-300 font-semibold">Servicio de Urgencias</span>
           </div>
         </div>
       </div>
@@ -141,15 +145,18 @@ export default function Footer() {
 }
 
 def update_final():
-    print("🛠️ Aplicando cambios finales a SGA...")
+    print("🛠️ Aplicando optimización SEO local a SGA...")
     
     for path, content in files.items():
+        # Asegurarse de que el directorio existe antes de escribir
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        
         with open(path, "w", encoding="utf-8") as f:
-            f.write(content.strip())
+            f.write(content.strip() + "\n")
         
         print(f"✅ Actualizado: {path}")
 
-    print("\n✨ ¡Listo! Revisa la web.")
+    print("\n✨ ¡Listo! Hacé un push a Vercel para ver los cambios.")
 
 if __name__ == "__main__":
     update_final()

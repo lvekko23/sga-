@@ -5,7 +5,7 @@ files = {
     "src/lib/constants.ts": """
 export const COMPANY_INFO = {
   name: "SGA Fumigaciones",
-  phone: "+54 9 11 3448-4723",
+  phone: "+54 9 11 5496-5979",
   whatsappUrl: "https://wa.me/5491134484723?text=Hola,%20necesito%20un%20presupuesto%20para%20una%20fumigación.",
   email: "sga.fumigaciones@gmail.com",
   // Dirección vacía para que no aparezca

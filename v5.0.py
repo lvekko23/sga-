@@ -58,7 +58,7 @@ export default function Cotizador() {
 
     if (plaga === "Roedores") {
       precio = 85000;
-      notas = "Precio base para propiedades de hasta 100 m2.";
+      notes = "Precio base para propiedades de hasta 100 m2.";
     } else if (plaga === "Cucarachas") {
       precio = 75000;
       notas = "Precio base para propiedades de hasta 2 ambientes.";
@@ -119,9 +119,9 @@ export default function Cotizador() {
     let texto = "";
     
     if (resultado.isCustom) {
-      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\n\n🏢 *Sector:* ${resultado.tipo}\n🐛 *Plaga a tratar:* ${resultado.plaga}\n\n¿Me podrían asesorar?`;
+      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\\n\\n🏢 *Sector:* ${resultado.tipo}\\n🐛 *Plaga a tratar:* ${resultado.plaga}\\n\\n¿Me podrían asesorar?`;
     } else {
-      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\n\n🏢 *Cliente:* ${resultado.tipo}\n🐛 *Plaga:* ${resultado.plaga}\n📏 *Espacio:* ${resultado.medida} ${resultado.etiquetaMedida}\n💰 *Presupuesto Estimado:* $${resultado.total}\n\n¿Tienen disponibilidad para una visita?`;
+      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\\n\\n🏢 *Cliente:* ${resultado.tipo}\\n🐛 *Plaga:* ${resultado.plaga}\\n📏 *Espacio:* ${resultado.medida} ${resultado.etiquetaMedida}\\n💰 *Presupuesto Estimado:* $${resultado.total}\\n\\n¿Tienen disponibilidad para una visita?`;
     }
     
     window.open(`https://wa.me/${TELEFONO_SGA}?text=${encodeURIComponent(texto)}`, '_blank');
@@ -307,6 +307,7 @@ export default function Home() {
 
     "src/components/layout/Footer.tsx": """
 import { COMPANY_INFO } from '@/lib/constants';
+import { Bug, Rat } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -329,7 +330,19 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center mt-12 pt-8 border-t border-green-800 text-sm text-green-400 font-medium">
+      
+      {/* Línea verde del fondo con las plagas integradas de forma divertida */}
+      <div className="relative mt-12 pt-8 border-t border-green-800 text-center text-sm text-green-400 font-medium">
+        {/* Cucaracha (Bug) a la izquierda de la línea */}
+        <div className="absolute -top-3.5 left-12 md:left-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
+          <Bug className="w-7 h-7 transform -rotate-45" />
+        </div>
+        
+        {/* Roedor (Rat) a la derecha de la línea */}
+        <div className="absolute -top-3.5 right-12 md:right-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
+          <Rat className="w-7 h-7 transform scale-x-[-1]" />
+        </div>
+
         © {new Date().getFullYear()} {COMPANY_INFO.name}. Todos los derechos reservados.
       </div>
     </footer>
@@ -347,7 +360,7 @@ def armar_web():
             f.write(content.strip() + "\n")
         print(f"✅ Listo: {path}")
 
-    print("\n✨ ¡Página actualizada con éxito! Ejecutá 'npm run dev' en la consola para ver los cambios.")
+    print("\\n✨ ¡Página actualizada con éxito! Ejecutá 'npm run dev' en la consola para ver los cambios.")
 
 if __name__ == "__main__":
     armar_web()

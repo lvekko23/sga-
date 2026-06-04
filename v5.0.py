@@ -58,7 +58,7 @@ export default function Cotizador() {
 
     if (plaga === "Roedores") {
       precio = 85000;
-      notes = "Precio base para propiedades de hasta 100 m2.";
+      notas = "Precio base para propiedades de hasta 100 m2.";
     } else if (plaga === "Cucarachas") {
       precio = 75000;
       notas = "Precio base para propiedades de hasta 2 ambientes.";
@@ -212,7 +212,7 @@ export default function Cotizador() {
 
     "src/app/page.tsx": """
 import { Metadata } from 'next';
-import { ShieldCheck, Bug, Rat, Leaf, Factory } from 'lucide-react';
+import { Bug, Rat, Leaf, Factory } from 'lucide-react';
 import { COMPANY_INFO } from '@/lib/constants';
 import Cotizador from '@/components/Cotizador';
 
@@ -230,7 +230,7 @@ export default function Home() {
         
         <div className="relative container mx-auto text-center max-w-5xl">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight text-white drop-shadow-lg leading-tight uppercase">
-            SGA Servicios de <br className="hidden md:block"/> Gestión Ambiental
+            SGA SERVICIOS DE <br className="hidden md:block"/> GESTIÓN AMBIENTAL
           </h1>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-10 text-green-300 uppercase tracking-widest drop-shadow-md">
             Manejo Integral de Plagas
@@ -266,7 +266,7 @@ export default function Home() {
             { 
               title: "Desinsectación", 
               icon: Bug, 
-              desc: "Erradicación de cucarachas, hormigas, chinches, pulgas y mosquitos con geles y líquidos de última generación." 
+              desc: "Erradicación de cucarachas, hormigas, chinches, pulgas y mosquitos. Uso de productos domisanitarios aprobados por ANMAT." 
             },
             { 
               title: "Desratización", 
@@ -289,17 +289,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Garantía */}
-      <section className="bg-green-50 py-16 border-y border-green-100">
-        <div className="container mx-auto px-4 text-center">
-          <ShieldCheck className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-4 text-green-900 uppercase">Trabajos con Garantía Escrita</h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            En <strong>{COMPANY_INFO.name}</strong> nuestra prioridad es tu tranquilidad. Operamos bajo estrictas normas de seguridad ambiental.
-          </p>
-        </div>
-      </section>
     </div>
   );
 }
@@ -314,7 +303,7 @@ export default function Footer() {
     <footer className="bg-green-900 text-green-100 py-12 mt-auto">
       <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
         <div>
-          <h3 className="text-2xl font-bold text-white mb-4 uppercase">{COMPANY_INFO.name}</h3>
+          <h3 className="text-2xl font-bold text-white mb-4 uppercase">SGA SERVICIOS DE GESTIÓN AMBIENTAL</h3>
           <p className="text-green-200">Expertos en Manejo Integral de Plagas para Industrias, Comercios, Hogares y Jardines. Cuidamos el medio ambiente.</p>
         </div>
         <div>
@@ -324,9 +313,10 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="text-xl font-bold text-white mb-4 uppercase">Horarios</h3>
-          <p className="font-medium">{COMPANY_INFO.schedule}</p>
+          <p className="font-medium text-green-200">Horario lunes a viernes 8 a 19</p>
+          <p className="font-medium text-green-200">Sábado 9 a 12</p>
           <div className="mt-4 inline-block bg-green-800 px-3 py-1 rounded-md border border-green-700">
-             <span className="text-green-300 font-bold tracking-wide">URGENCIAS 24HS</span>
+             <span className="text-green-300 font-bold tracking-wide">Urgencias 24 hs</span>
           </div>
         </div>
       </div>
@@ -357,10 +347,8 @@ def armar_web():
     for path, content in files.items():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
-            f.write(content.strip() + "\n")
+            f.write(content.strip() + "\\n")
         print(f"✅ Listo: {path}")
-
-    print("\\n✨ ¡Página actualizada con éxito! Ejecutá 'npm run dev' en la consola para ver los cambios.")
 
 if __name__ == "__main__":
     armar_web()

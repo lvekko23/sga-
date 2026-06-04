@@ -49,7 +49,7 @@ export default function Cotizador() {
 
     const valor = parseFloat(medida);
     if (isNaN(valor) || valor <= 0) {
-      alert(`Por favor, ingresá la cantidad de ${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
+      alert(`Por favor, ingresá la cantidad de \${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
       return;
     }
 
@@ -67,7 +67,7 @@ export default function Cotizador() {
       notas = "Precio base para propiedades de hasta 60 m2.";
     } else if (plaga === "Chinches de la cama") {
       precio = 70000 * valor;
-      notas = `Precio calculado a razón de $70.000 por ambiente (${valor} ambientes).`;
+      notas = `Precio calculado a razón de $70.000 por ambiente (\${valor} ambientes).`;
     }
 
     setResultado({ 
@@ -76,7 +76,7 @@ export default function Cotizador() {
       medida: valor,
       etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
       total: precio.toFixed(2),
-      notes,
+      notas, // <-- CORREGIDO ACÁ (Antes decía notes)
       isCustom: false 
     });
   };
@@ -347,7 +347,6 @@ def armar_web():
     for path, content in files.items():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
-            # ACÁ ESTÁ EL FIX: Cambiado "\\n" por "\n" real para evitar romper TypeScript
             f.write(content.strip() + "\n")
         print(f"✅ Listo: {path}")
 

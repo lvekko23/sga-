@@ -27,7 +27,7 @@ export default function Cotizador() {
 
     const valor = parseFloat(medida);
     if (isNaN(valor) || valor <= 0) {
-      alert(`Por favor, ingresá la cantidad de ${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
+      alert(`Por favor, ingresá la cantidad de \${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
       return;
     }
 
@@ -45,7 +45,7 @@ export default function Cotizador() {
       notas = "Precio base para propiedades de hasta 60 m2.";
     } else if (plaga === "Chinches de la cama") {
       precio = 70000 * valor;
-      notas = `Precio calculado a razón de $70.000 por ambiente (${valor} ambientes).`;
+      notas = `Precio calculado a razón de $70.000 por ambiente (\${valor} ambientes).`;
     }
 
     setResultado({ 
@@ -54,7 +54,7 @@ export default function Cotizador() {
       medida: valor,
       etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
       total: precio.toFixed(2),
-      notes,
+      notas, // <-- CORREGIDO ACÁ (Antes decía notes)
       isCustom: false 
     });
   };

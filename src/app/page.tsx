@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { ShieldCheck, Bug, Rat, Leaf, Factory } from 'lucide-react';
+import { Bug, Rat, Leaf, Factory } from 'lucide-react';
 import { COMPANY_INFO } from '@/lib/constants';
 import Cotizador from '@/components/Cotizador';
 
@@ -17,7 +17,7 @@ export default function Home() {
         
         <div className="relative container mx-auto text-center max-w-5xl">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight text-white drop-shadow-lg leading-tight uppercase">
-            SGA Servicios de <br className="hidden md:block"/> Gestión Ambiental
+            SGA SERVICIOS DE <br className="hidden md:block"/> GESTIÓN AMBIENTAL
           </h1>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-10 text-green-300 uppercase tracking-widest drop-shadow-md">
             Manejo Integral de Plagas
@@ -53,7 +53,7 @@ export default function Home() {
             { 
               title: "Desinsectación", 
               icon: Bug, 
-              desc: "Erradicación de cucarachas, hormigas, chinches, pulgas y mosquitos con geles y líquidos de última generación." 
+              desc: "Erradicación de cucarachas, hormigas, chinches, pulgas y mosquitos. Uso de productos domisanitarios aprobados por ANMAT." 
             },
             { 
               title: "Desratización", 
@@ -74,17 +74,6 @@ export default function Home() {
               <p className="text-gray-600 font-medium">{s.desc}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Garantía */}
-      <section className="bg-green-50 py-16 border-y border-green-100">
-        <div className="container mx-auto px-4 text-center">
-          <ShieldCheck className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold mb-4 text-green-900 uppercase">Trabajos con Garantía Escrita</h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            En <strong>{COMPANY_INFO.name}</strong> nuestra prioridad es tu tranquilidad. Operamos bajo estrictas normas de seguridad ambiental.
-          </p>
         </div>
       </section>
     </div>

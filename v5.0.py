@@ -76,7 +76,7 @@ export default function Cotizador() {
       medida: valor,
       etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
       total: precio.toFixed(2),
-      notas,
+      notes,
       isCustom: false 
     });
   };
@@ -95,14 +95,14 @@ export default function Cotizador() {
 
     doc.setFontSize(12);
     doc.text("---------------------------------------------------------", 20, 50);
-    doc.text(`Tipo de Cliente: ${resultado.tipo}`, 20, 60);
-    doc.text(`Plaga a tratar: ${resultado.plaga}`, 20, 70);
-    doc.text(`Espacio a cubrir: ${resultado.medida} ${resultado.etiquetaMedida}`, 20, 80);
+    doc.text(`Tipo de Cliente: \${resultado.tipo}`, 20, 60);
+    doc.text(`Plaga a tratar: \${resultado.plaga}`, 20, 70);
+    doc.text(`Espacio a cubrir: \${resultado.medida} \${resultado.etiquetaMedida}`, 20, 80);
     doc.text("---------------------------------------------------------", 20, 90);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text(`PRECIO ESTIMADO FINAL: $ ${resultado.total}`, 20, 105);
+    doc.text(`PRECIO ESTIMADO FINAL: $ \${resultado.total}`, 20, 105);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
@@ -119,12 +119,12 @@ export default function Cotizador() {
     let texto = "";
     
     if (resultado.isCustom) {
-      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\\n\\n🏢 *Sector:* ${resultado.tipo}\\n🐛 *Plaga a tratar:* ${resultado.plaga}\\n\\n¿Me podrían asesorar?`;
+      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\\n\\n🏢 *Sector:* \${resultado.tipo}\\n🐛 *Plaga a tratar:* \${resultado.plaga}\\n\\n¿Me podrían asesorar?`;
     } else {
-      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\\n\\n🏢 *Cliente:* ${resultado.tipo}\\n🐛 *Plaga:* ${resultado.plaga}\\n📏 *Espacio:* ${resultado.medida} ${resultado.etiquetaMedida}\\n💰 *Presupuesto Estimado:* $${resultado.total}\\n\\n¿Tienen disponibilidad para una visita?`;
+      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\\n\\n🏢 *Cliente:* \${resultado.tipo}\\n🐛 *Plaga:* \${resultado.plaga}\\n📏 *Espacio:* \${resultado.medida} \${resultado.etiquetaMedida}\\n💰 *Presupuesto Estimado:* \$\${resultado.total}\\n\\n¿Tienen disponibilidad para una visita?`;
     }
     
-    window.open(`https://wa.me/${TELEFONO_SGA}?text=${encodeURIComponent(texto)}`, '_blank');
+    window.open(`https://wa.me/\${TELEFONO_SGA}?text=\${encodeURIComponent(texto)}`, '_blank');
   };
 
   return (
@@ -308,7 +308,7 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="text-xl font-bold text-white mb-4 uppercase">Contacto</h3>
-          <a href={`tel:${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition font-medium">{COMPANY_INFO.phone}</a>
+          <a href={`tel:\${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition font-medium">{COMPANY_INFO.phone}</a>
           <p>{COMPANY_INFO.email}</p>
         </div>
         <div>
@@ -347,7 +347,8 @@ def armar_web():
     for path, content in files.items():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
-            f.write(content.strip() + "\\n")
+            # ACÁ ESTÁ EL FIX: Cambiado "\\n" por "\n" real para evitar romper TypeScript
+            f.write(content.strip() + "\n")
         print(f"✅ Listo: {path}")
 
 if __name__ == "__main__":

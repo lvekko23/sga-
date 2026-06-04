@@ -54,7 +54,7 @@ export default function Cotizador() {
       medida: valor,
       etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
       total: precio.toFixed(2),
-      notas,
+      notes,
       isCustom: false 
     });
   };
@@ -73,14 +73,14 @@ export default function Cotizador() {
 
     doc.setFontSize(12);
     doc.text("---------------------------------------------------------", 20, 50);
-    doc.text(`Tipo de Cliente: ${resultado.tipo}`, 20, 60);
-    doc.text(`Plaga a tratar: ${resultado.plaga}`, 20, 70);
-    doc.text(`Espacio a cubrir: ${resultado.medida} ${resultado.etiquetaMedida}`, 20, 80);
+    doc.text(`Tipo de Cliente: \${resultado.tipo}`, 20, 60);
+    doc.text(`Plaga a tratar: \${resultado.plaga}`, 20, 70);
+    doc.text(`Espacio a cubrir: \${resultado.medida} \${resultado.etiquetaMedida}`, 20, 80);
     doc.text("---------------------------------------------------------", 20, 90);
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text(`PRECIO ESTIMADO FINAL: $ ${resultado.total}`, 20, 105);
+    doc.text(`PRECIO ESTIMADO FINAL: $ \${resultado.total}`, 20, 105);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
@@ -97,24 +97,12 @@ export default function Cotizador() {
     let texto = "";
     
     if (resultado.isCustom) {
-      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.
-
-🏢 *Sector:* ${resultado.tipo}
-🐛 *Plaga a tratar:* ${resultado.plaga}
-
-¿Me podrían asesorar?`;
+      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\n\n🏢 *Sector:* \${resultado.tipo}\n🐛 *Plaga a tratar:* \${resultado.plaga}\n\n¿Me podrían asesorar?`;
     } else {
-      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:
-
-🏢 *Cliente:* ${resultado.tipo}
-🐛 *Plaga:* ${resultado.plaga}
-📏 *Espacio:* ${resultado.medida} ${resultado.etiquetaMedida}
-💰 *Presupuesto Estimado:* $${resultado.total}
-
-¿Tienen disponibilidad para una visita?`;
+      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\n\n🏢 *Cliente:* \${resultado.tipo}\n🐛 *Plaga:* \${resultado.plaga}\n📏 *Espacio:* \${resultado.medida} \${resultado.etiquetaMedida}\n💰 *Presupuesto Estimado:* \$\${resultado.total}\n\n¿Tienen disponibilidad para una visita?`;
     }
     
-    window.open(`https://wa.me/${TELEFONO_SGA}?text=${encodeURIComponent(texto)}`, '_blank');
+    window.open(`https://wa.me/\${TELEFONO_SGA}?text=\${encodeURIComponent(texto)}`, '_blank');
   };
 
   return (

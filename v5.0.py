@@ -1,354 +1,248 @@
-import os
+codigo_next = '''"use client";
 
-files = {
-    "src/lib/constants.ts": """
-export const COMPANY_INFO = {
-  name: "SGA Servicios de Gestión Ambiental",
-  phone: "+54 9 11 5496-5979",
-  whatsappUrl: "https://wa.me/5491154965979",
-  email: "contacto@sga-fumigaciones.com",
-  address: "Luján, Buenos Aires",
-  schedule: "Lunes a Sábado de 8:00 a 20:00hs",
-};
-
-export const MENU_ITEMS = [
-  { name: "Inicio", href: "/" },
-  { name: "Servicios", href: "/#servicios" },
-  { name: "Cotizador", href: "/#cotizador" },
-  { name: "Contacto", href: "/#contacto" },
-];
-""",
-
-    "src/components/Cotizador.tsx": """
-"use client";
-
-import { useState } from "react";
-import { jsPDF } from "jspdf";
-import { Calculator, FileText, MessageCircle } from "lucide-react";
-
-const TIPOS_CLIENTE = ["Hogar", "Comercio", "Industria", "Jardines"];
-const TIPOS_PLAGA = ["Roedores", "Cucarachas", "Pulgas", "Chinches de la cama", "Mosquitos"];
-const TELEFONO_SGA = "5491154965979"; 
-
-export default function Cotizador() {
-  const [tipo, setTipo] = useState("Hogar");
-  const [plaga, setPlaga] = useState("Roedores");
-  const [medida, setMedida] = useState("");
-  const [resultado, setResultado] = useState<any>(null);
-
-  // Verificamos si la combinación actual requiere presupuesto personalizado
-  const requierePersonalizado = tipo === "Industria" || tipo === "Jardines" || plaga === "Mosquitos";
-  // Verificamos si la plaga se mide por ambientes o m2
-  const mideEnAmbientes = plaga === "Cucarachas" || plaga === "Chinches de la cama";
-
-  const calcular = () => {
-    if (requierePersonalizado) {
-      setResultado({ tipo, plaga, isCustom: true });
-      return;
-    }
-
-    const valor = parseFloat(medida);
-    if (isNaN(valor) || valor <= 0) {
-      alert(`Por favor, ingresá la cantidad de \${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
-      return;
-    }
-
-    let precio = 0;
-    let notas = "";
-
-    if (plaga === "Roedores") {
-      precio = 85000;
-      notas = "Precio base para propiedades de hasta 100 m2.";
-    } else if (plaga === "Cucarachas") {
-      precio = 75000;
-      notas = "Precio base para propiedades de hasta 2 ambientes.";
-    } else if (plaga === "Pulgas") {
-      precio = 95000;
-      notas = "Precio base para propiedades de hasta 60 m2.";
-    } else if (plaga === "Chinches de la cama") {
-      precio = 70000 * valor;
-      notas = `Precio calculado a razón de $70.000 por ambiente (\${valor} ambientes).`;
-    }
-
-    setResultado({ 
-      tipo, 
-      plaga, 
-      medida: valor,
-      etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
-      total: precio.toFixed(2),
-      notas, // <-- CORREGIDO ACÁ (Antes decía notes)
-      isCustom: false 
-    });
-  };
-
-  const generarPDF = () => {
-    if (!resultado || resultado.isCustom) return;
-    const doc = new jsPDF();
-    
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("SGA SERVICIOS DE GESTION AMBIENTAL", 20, 30);
-    
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(16);
-    doc.text("Presupuesto - Manejo Integral de Plagas", 20, 40);
-
-    doc.setFontSize(12);
-    doc.text("---------------------------------------------------------", 20, 50);
-    doc.text(`Tipo de Cliente: \${resultado.tipo}`, 20, 60);
-    doc.text(`Plaga a tratar: \${resultado.plaga}`, 20, 70);
-    doc.text(`Espacio a cubrir: \${resultado.medida} \${resultado.etiquetaMedida}`, 20, 80);
-    doc.text("---------------------------------------------------------", 20, 90);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(`PRECIO ESTIMADO FINAL: $ \${resultado.total}`, 20, 105);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(resultado.notas, 20, 115);
-    doc.text("Validez del presupuesto: 15 dias.", 20, 125);
-    doc.text("Los precios pueden variar tras la inspeccion tecnica presencial en caso de exceder dimensiones.", 20, 130);
-    doc.text("Gracias por confiar en nuestros servicios.", 20, 140);
-
-    doc.save("Presupuesto_SGA.pdf");
-  };
-
-  const enviarWhatsApp = () => {
-    if (!resultado) return;
-    let texto = "";
-    
-    if (resultado.isCustom) {
-      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\\n\\n🏢 *Sector:* \${resultado.tipo}\\n🐛 *Plaga a tratar:* \${resultado.plaga}\\n\\n¿Me podrían asesorar?`;
-    } else {
-      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\\n\\n🏢 *Cliente:* \${resultado.tipo}\\n🐛 *Plaga:* \${resultado.plaga}\\n📏 *Espacio:* \${resultado.medida} \${resultado.etiquetaMedida}\\n💰 *Presupuesto Estimado:* \$\${resultado.total}\\n\\n¿Tienen disponibilidad para una visita?`;
-    }
-    
-    window.open(`https://wa.me/\${TELEFONO_SGA}?text=\${encodeURIComponent(texto)}`, '_blank');
-  };
-
-  return (
-    <div className="bg-white p-8 rounded-xl shadow-xl border border-green-100 max-w-md mx-auto my-12">
-      <div className="text-center mb-6">
-        <Calculator className="w-12 h-12 text-green-600 mx-auto mb-2" />
-        <h3 className="text-2xl font-bold text-green-900">Cotizador Online</h3>
-        <p className="text-gray-600 text-sm">Calculá el costo de tu servicio al instante</p>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block font-bold text-gray-700 mb-1">Tipo de cliente / Entorno</label>
-          <select className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" value={tipo} onChange={(e) => {setTipo(e.target.value); setResultado(null);}}>
-            {TIPOS_CLIENTE.map(k => <option key={k} value={k}>{k}</option>)}
-          </select>
-        </div>
-
-        <div>
-          <label className="block font-bold text-gray-700 mb-1">Tipo de plaga a tratar</label>
-          <select className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" value={plaga} onChange={(e) => {setPlaga(e.target.value); setResultado(null);}}>
-            {TIPOS_PLAGA.map(k => <option key={k} value={k}>{k}</option>)}
-          </select>
-        </div>
-
-        {!requierePersonalizado && (
-          <div>
-            <label className="block font-bold text-gray-700 mb-1">
-              {mideEnAmbientes ? "Cantidad de ambientes" : "Metros cuadrados aprox."}
-            </label>
-            <input 
-              type="number" 
-              className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" 
-              placeholder={mideEnAmbientes ? "Ej: 2" : "Ej: 100"} 
-              value={medida} 
-              onChange={(e) => setMedida(e.target.value)} 
-            />
-          </div>
-        )}
-
-        <div className="flex gap-2 pt-2">
-          <button onClick={calcular} className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-lg transition">
-            {requierePersonalizado ? "Consultar Disponibilidad" : "Calcular Total"}
-          </button>
-          <button onClick={() => { setMedida(""); setResultado(null); }} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition">
-            Limpiar
-          </button>
-        </div>
-      </div>
-
-      {resultado && (
-        <div className="mt-6 p-5 bg-green-50 border-2 border-dashed border-green-500 rounded-lg text-center animate-in fade-in zoom-in duration-300">
-          
-          {resultado.isCustom ? (
-            <>
-              <p className="text-xl font-extrabold text-green-700 mb-2">Presupuesto Personalizado</p>
-              <p className="text-sm text-gray-600 mb-4">Por las características de este servicio, necesitamos más detalles para cotizarte correctamente.</p>
-              <button onClick={enviarWhatsApp} className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition">
-                <MessageCircle className="w-5 h-5" /> Contactar por WhatsApp
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="text-sm text-green-800 font-semibold mb-1">Precio Estimado:</p>
-              <p className="text-4xl font-extrabold text-green-700 mb-2">$ {resultado.total}</p>
-              <p className="text-xs text-gray-500 mb-4 font-medium italic">{resultado.notas}</p>
-              
-              <div className="flex flex-col gap-3">
-                <button onClick={generarPDF} className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition">
-                  <FileText className="w-5 h-5" /> Descargar PDF
-                </button>
-                <button onClick={enviarWhatsApp} className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition">
-                  <MessageCircle className="w-5 h-5" /> Enviar por WhatsApp
-                </button>
-              </div>
-            </>
-          )}
-
-        </div>
-      )}
-    </div>
-  );
-}
-""",
-
-    "src/app/page.tsx": """
-import { Metadata } from 'next';
-import { Bug, Rat, Leaf, Factory } from 'lucide-react';
-import { COMPANY_INFO } from '@/lib/constants';
-import Cotizador from '@/components/Cotizador';
-
-export const metadata: Metadata = {
-  title: 'SGA Servicios de Gestión Ambiental | Manejo Integral de Plagas',
-  description: 'Manejo integral de plagas para Industrias, Comercios, Hogares y Jardines. Desratización, cucarachas y mosquitos.',
-};
+import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
+  const [tipoPropiedad, setTipoPropiedad] = useState('');
+  const [tipoPlaga, setTipoPlaga] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
+
+  const plagas = [
+    { id: 'cucarachas', nombre: 'Cucarachas', icono: '🪳' },
+    { id: 'roedores', nombre: 'Roedores', icono: '🐀' },
+    { id: 'mosquitos', nombre: 'Mosquitos', icono: '🦟' },
+    { id: 'hormigas', nombre: 'Hormigas/Pulgones', icono: '🐜' },
+    { id: 'jardin', nombre: 'Plagas de Jardín', icono: '🌿' },
+  ];
+
+  const propiedades = [
+    { id: 'hogar', nombre: 'Particular / Casa', icono: '🏠' },
+    { id: 'comercio', nombre: 'Comercio / Local', icono: '🏪' },
+    { id: 'fabrica', nombre: 'Fábrica / Empresa', icono: '🏭' },
+    { id: 'parque', nombre: 'Parques / Consorcio', icono: '🌳' },
+  ];
+
+  const handleCotizar = (e) => {
+    e.preventDefault();
+    if (!tipoPropiedad || !tipoPlaga) {
+      alert("Por favor selecciona el tipo de propiedad y la plaga a tratar.");
+      return;
+    }
+
+    const mensaje = encodeURIComponent(
+      `Hola SGA, quisiera solicitar un presupuesto personalizado.\\n\\n` +
+      `*Nombre:* ${nombre || 'No especificado'}\\n` +
+      `*Teléfono:* ${telefono || 'No especificado'}\\n` +
+      `*Propiedad:* ${tipoPropiedad}\\n` +
+      `*Plaga/Servicio:* ${tipoPlaga}`
+    );
+
+    window.open(`https://wa.me/5492323357985?text=${mensaje}`, '_blank');
+  };
+
+  const galeriaServicios = [
+    { id: 1, src: '/images/foto1.png', alt: 'Control de pulgones e plagas de jardín', titulo: 'Control de Pulgones' },
+    { id: 2, src: '/images/foto2.png', alt: 'Fumigación de espacios interiores con traje de protección', titulo: 'Fumigación Interior' },
+    { id: 3, src: '/images/foto3.png', alt: 'Control fitosanitario en cultivos e invernaderos', titulo: 'Control Fitosanitario' },
+    { id: 4, src: '/images/foto4.png', alt: 'Tratamiento de parques y paisajismo', titulo: 'Parques y Espacios Verdes' },
+    { id: 5, src: '/images/foto5.png', alt: 'Protección para residencias y madera', titulo: 'Tratamiento Residencial' },
+    { id: 6, src: '/images/foto6.png', alt: 'Control y manejo de roedores', titulo: 'Manejo de Roedores' },
+  ];
+
   return (
-    <div className="flex flex-col gap-16 pb-10 bg-white">
-      {/* Hero Section */}
-      <section className="relative bg-green-800 text-white py-28 px-4 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        
-        <div className="relative container mx-auto text-center max-w-5xl">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight text-white drop-shadow-lg leading-tight uppercase">
-            SGA SERVICIOS DE <br className="hidden md:block"/> GESTIÓN AMBIENTAL
+    <div className="min-h-screen bg-slate-900 text-zinc-100 font-sans">
+      
+      {/* HERO SECTION */}
+      <section className="relative min-h-[85vh] flex items-center justify-center text-center px-4 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/foto4.png"
+            alt="Jardín y gestión ambiental"
+            fill
+            priority
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-emerald-950/70 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6 pt-12">
+          <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight drop-shadow-md">
+            SGA SERVICIOS DE GESTIÓN AMBIENTAL
           </h1>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-10 text-green-300 uppercase tracking-widest drop-shadow-md">
-            Manejo Integral de Plagas
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <a href={COMPANY_INFO.whatsappUrl} target="_blank" rel="noopener noreferrer" className="bg-white text-green-800 hover:bg-green-50 font-extrabold py-4 px-8 rounded-lg text-lg transition shadow-xl transform hover:-translate-y-1">
-              📲 Contacto Directo
-            </a>
-            <a href="#cotizador" className="bg-green-700 hover:bg-green-900 text-white border border-green-500 font-bold py-4 px-8 rounded-lg text-lg transition">
-              Cotizar Servicio
+          <p className="text-lg md:text-2xl text-emerald-100 font-medium max-w-2xl mx-auto">
+            Soluciones integrales de fumigación, control de plagas y cuidado de espacios verdes.
+          </p>
+
+          <div className="pt-4 flex flex-wrap justify-center gap-4 text-sm md:text-base font-semibold">
+            <span className="bg-emerald-600/80 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-emerald-400/30 flex items-center gap-2 shadow-lg">
+              🛡️ Productos 100% seguros para niños y mascotas
+            </span>
+            <span className="bg-emerald-600/80 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-emerald-400/30 flex items-center gap-2 shadow-lg">
+              ✨ Asesoramiento profesional garantizado
+            </span>
+          </div>
+
+          <div className="pt-6">
+            <a 
+              href="#cotizador" 
+              className="inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-8 py-4 rounded-xl transition-all shadow-xl hover:scale-105 uppercase tracking-wider"
+            >
+              Solicitar Presupuesto Online
             </a>
           </div>
         </div>
       </section>
 
-      {/* SECCIÓN DEL BOT COTIZADOR */}
-      <section id="cotizador" className="container mx-auto px-4 scroll-mt-20">
-        <Cotizador />
+      {/* COTIZADOR CON COLORES DE LA PÁGINA (ESMERALDA Y Pizarra) */}
+      <section id="cotizador" className="py-16 bg-slate-950 border-y border-slate-800 px-4">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-black text-white uppercase tracking-tight">Solicitá tu Presupuesto</h2>
+            <p className="text-slate-400">Completá los pasos para comunicarte directamente con nuestro equipo por WhatsApp.</p>
+          </div>
+
+          <form onSubmit={handleCotizar} className="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6 shadow-2xl">
+            
+            {/* Paso 1: Tipo de propiedad */}
+            <div>
+              <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+                1. Seleccioná el tipo de propiedad
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {propiedades.map((p) => (
+                  <button
+                    type="button"
+                    key={p.id}
+                    onClick={() => setTipoPropiedad(p.nombre)}
+                    className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
+                      tipoPropiedad === p.nombre 
+                        ? 'border-emerald-500 bg-emerald-950/60 text-white font-bold ring-2 ring-emerald-500/50' 
+                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-emerald-300'
+                    }`}
+                  >
+                    <span className="text-2xl">{p.icono}</span>
+                    <span className="text-xs">{p.nombre}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Paso 2: Tipo de plaga */}
+            <div>
+              <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+                2. Seleccioná el servicio o problema
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {plagas.map((p) => (
+                  <button
+                    type="button"
+                    key={p.id}
+                    onClick={() => setTipoPlaga(p.nombre)}
+                    className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
+                      tipoPlaga === p.nombre 
+                        ? 'border-emerald-500 bg-emerald-950/60 text-white font-bold ring-2 ring-emerald-500/50' 
+                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-emerald-300'
+                    }`}
+                  >
+                    <span className="text-2xl">{p.icono}</span>
+                    <span className="text-xs">{p.nombre}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Paso 3: Datos de Contacto */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Nombre (Opcional)</label>
+                <input 
+                  type="text" 
+                  value={nombre} 
+                  onChange={(e) => setNombre(e.target.value)} 
+                  placeholder="Tu nombre" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Teléfono (Opcional)</label>
+                <input 
+                  type="text" 
+                  value={telefono} 
+                  onChange={(e) => setTelefono(e.target.value)} 
+                  placeholder="Ej: 1122334455" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-xl transition-all flex items-center justify-center gap-3 uppercase tracking-wider text-sm shadow-lg shadow-emerald-900/30"
+            >
+              <span className="text-xl">💬</span> Enviar consulta y cotizar por WhatsApp
+            </button>
+          </form>
+        </div>
       </section>
 
-      {/* Servicios */}
-      <section id="servicios" className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-4 text-green-900 uppercase">Servicios Especializados</h2>
-        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto text-lg">Soluciones adaptadas para cada entorno con certificación oficial.</p>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { 
-              title: "INDUSTRIAS", 
-              icon: Factory, 
-              desc: "Manejo integral de plagas para el sector industrial, fábricas y galpones. Auditorías y certificados oficiales." 
-            },
-            { 
-              title: "Desinsectación", 
-              icon: Bug, 
-              desc: "Erradicación de cucarachas, hormigas, chinches, pulgas y mosquitos. Uso de productos domisanitarios aprobados por ANMAT." 
-            },
-            { 
-              title: "Desratización", 
-              icon: Rat, 
-              desc: "Control efectivo de roedores mediante estaciones de cebado de seguridad inviolables." 
-            },
-            { 
-              title: "Jardines y Campos", 
-              icon: Leaf, 
-              desc: "Fumigación y mantenimiento preventivo en exteriores, control de mosquitos, hormigas y plagas vegetales." 
-            },
-          ].map((s, i) => (
-            <div key={i} className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition border border-green-100 group">
-              <div className="bg-green-50 w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors">
-                <s.icon className="w-8 h-8 text-green-600 group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-800 uppercase">{s.title}</h3>
-              <p className="text-gray-600 font-medium">{s.desc}</p>
+      {/* GALERÍA DE TRABAJOS Y TRATAMIENTOS (RECORTE UNIFORME) */}
+      <section className="py-16 px-6 max-w-7xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-bold text-emerald-400 uppercase tracking-tight">Nuestros Servicios en Acción</h2>
+          <p className="text-slate-400">Personal técnico capacitado y aplicación en todo tipo de ambientes.</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {galeriaServicios.map((foto) => (
+            <div key={foto.id} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-800 group bg-slate-950 shadow-xl">
+              <Image 
+                src={foto.src} 
+                alt={foto.alt} 
+                fill 
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80"></div>
+              <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300 drop-shadow">
+                {foto.titulo}
+              </p>
             </div>
           ))}
         </div>
       </section>
+
+      {/* FOOTER CON LOGO DE HABILITACIONES (ANMAT Y SENASA) */}
+      <footer className="py-12 px-6 bg-slate-950 border-t border-slate-900 text-center space-y-6">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Empresa Habilitada y Certificada
+          </p>
+          
+          <div className="flex justify-center items-center pt-2">
+            <div className="relative w-72 md:w-96 h-20 bg-white/95 rounded-xl p-3 flex items-center justify-center shadow-lg border border-slate-800">
+              <Image 
+                src="/images/foto-anmat.png" 
+                alt="Certificaciones ANMAT y SENASA" 
+                fill 
+                className="object-contain p-2"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-slate-900/50 text-xs text-slate-600">
+          © {new Date().getFullYear()} SGA - Servicios de Gestión Ambiental. Todos los derechos reservados.
+        </div>
+      </footer>
+
     </div>
   );
 }
-""",
+'''
 
-    "src/components/layout/Footer.tsx": """
-import { COMPANY_INFO } from '@/lib/constants';
-import { Bug, Rat } from 'lucide-react';
+with open("src/app/page.tsx", "w", encoding="utf-8") as f:
+    f.write(codigo_next)
 
-export default function Footer() {
-  return (
-    <footer className="bg-green-900 text-green-100 py-12 mt-auto">
-      <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
-        <div>
-          <h3 className="text-2xl font-bold text-white mb-4 uppercase">SGA SERVICIOS DE GESTIÓN AMBIENTAL</h3>
-          <p className="text-green-200">Expertos en Manejo Integral de Plagas para Industrias, Comercios, Hogares y Jardines. Cuidamos el medio ambiente.</p>
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-white mb-4 uppercase">Contacto</h3>
-          <a href={`tel:\${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition font-medium">{COMPANY_INFO.phone}</a>
-          <p>{COMPANY_INFO.email}</p>
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-white mb-4 uppercase">Horarios</h3>
-          <p className="font-medium text-green-200">Horario lunes a viernes 8 a 19</p>
-          <p className="font-medium text-green-200">Sábado 9 a 12</p>
-          <div className="mt-4 inline-block bg-green-800 px-3 py-1 rounded-md border border-green-700">
-             <span className="text-green-300 font-bold tracking-wide">Urgencias 24 hs</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Línea verde del fondo con las plagas integradas de forma divertida */}
-      <div className="relative mt-12 pt-8 border-t border-green-800 text-center text-sm text-green-400 font-medium">
-        {/* Cucaracha (Bug) a la izquierda de la línea */}
-        <div className="absolute -top-3.5 left-12 md:left-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
-          <Bug className="w-7 h-7 transform -rotate-45" />
-        </div>
-        
-        {/* Roedor (Rat) a la derecha de la línea */}
-        <div className="absolute -top-3.5 right-12 md:right-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
-          <Rat className="w-7 h-7 transform scale-x-[-1]" />
-        </div>
-
-        © {new Date().getFullYear()} {COMPANY_INFO.name}. Todos los derechos reservados.
-      </div>
-    </footer>
-  );
-}
-"""
-}
-
-def armar_web():
-    print("🚀 Reemplazando e inyectando archivos en Next.js...")
-    
-    for path, content in files.items():
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content.strip() + "\n")
-        print(f"✅ Listo: {path}")
-
-if __name__ == "__main__":
-    armar_web()
+print("¡Archivo page.tsx guardado con éxito!")

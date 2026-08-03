@@ -11,7 +11,7 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="text-xl font-bold text-white mb-4 uppercase">Contacto</h3>
-          <a href={`tel:\${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition font-medium">{COMPANY_INFO.phone}</a>
+          <a href={`tel:${COMPANY_INFO.phone}`} className="block mb-2 hover:text-white transition font-medium">{COMPANY_INFO.phone}</a>
           <p>{COMPANY_INFO.email}</p>
         </div>
         <div>
@@ -24,14 +24,11 @@ export default function Footer() {
         </div>
       </div>
       
-      {/* Línea verde del fondo con las plagas integradas de forma divertida */}
       <div className="relative mt-12 pt-8 border-t border-green-800 text-center text-sm text-green-400 font-medium">
-        {/* Cucaracha (Bug) a la izquierda de la línea */}
         <div className="absolute -top-3.5 left-12 md:left-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
           <Bug className="w-7 h-7 transform -rotate-45" />
         </div>
         
-        {/* Roedor (Rat) a la derecha de la línea */}
         <div className="absolute -top-3.5 right-12 md:right-1/4 bg-green-900 px-2 text-green-700 hover:text-green-500 transition-colors duration-300">
           <Rat className="w-7 h-7 transform scale-x-[-1]" />
         </div>

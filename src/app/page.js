@@ -42,23 +42,14 @@ export default function Home() {
     window.open(`https://wa.me/5492323357985?text=${mensaje}`, '_blank');
   };
 
-  const galeriaServicios = [
-    { id: 1, src: '/images/foto1.png', alt: 'Control de pulgones e plagas de jardín', titulo: 'Control de Pulgones' },
-    { id: 2, src: '/images/foto2.png', alt: 'Fumigación de espacios interiores con traje de protección', titulo: 'Fumigación Interior' },
-    { id: 3, src: '/images/foto3.png', alt: 'Control fitosanitario en cultivos e invernaderos', titulo: 'Control Fitosanitario' },
-    { id: 4, src: '/images/foto4.png', alt: 'Tratamiento de parques y paisajismo', titulo: 'Parques y Espacios Verdes' },
-    { id: 5, src: '/images/foto5.png', alt: 'Protección para residencias y madera', titulo: 'Tratamiento Residencial' },
-    { id: 6, src: '/images/foto6.png', alt: 'Control y manejo de roedores', titulo: 'Manejo de Roedores' },
-  ];
-
   return (
     <div className="min-h-screen bg-slate-900 text-zinc-100 font-sans">
       
-      {/* HERO SECTION */}
+      {/* 1. HERO SECTION CON OVERLAY VERDE TRANSPARENTE */}
       <section className="relative min-h-[85vh] flex items-center justify-center text-center px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/foto4.png"
+            src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1600&auto=format&fit=crop"
             alt="Jardín y gestión ambiental"
             fill
             priority
@@ -77,7 +68,7 @@ export default function Home() {
 
           <div className="pt-4 flex flex-wrap justify-center gap-4 text-sm md:text-base font-semibold">
             <span className="bg-emerald-600/80 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-emerald-400/30 flex items-center gap-2 shadow-lg">
-              🛡️ Productos 100% seguros para niños y mascotas
+              🛡️ Utilizamos productos 100% seguros para niños y mascotas
             </span>
             <span className="bg-emerald-600/80 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-emerald-400/30 flex items-center gap-2 shadow-lg">
               ✨ Asesoramiento profesional garantizado
@@ -95,7 +86,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COTIZADOR CON COLORES DE LA PÁGINA (ESMERALDA Y Pizarra) */}
+      {/* 2. GALERÍA / TRABAJO TÉCNICO Y ESPACIOS */}
+      <section className="py-16 px-6 max-w-7xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-bold text-emerald-400 uppercase">Nuestros Servicios en Acción</h2>
+          <p className="text-slate-400">Personal técnico capacitado y aplicación en todo tipo de ambientes.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="relative h-64 rounded-xl overflow-hidden border border-slate-800 group">
+            <Image 
+              src="https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=800&auto=format&fit=crop" 
+              alt="Personal técnico trabajando" 
+              fill 
+              className="object-cover group-hover:scale-110 transition-transform duration-500 filter contrast-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300">Técnicos Capacitados</p>
+          </div>
+
+          <div className="relative h-64 rounded-xl overflow-hidden border border-slate-800 group">
+            <Image 
+              src="https://images.unsplash.com/photo-1592417817098-8f3d6eb1626f?q=80&w=800&auto=format&fit=crop" 
+              alt="Fumigación y control" 
+              fill 
+              className="object-cover group-hover:scale-110 transition-transform duration-500 filter contrast-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300">Aplicaciones Seguras</p>
+          </div>
+
+          <div className="relative h-64 rounded-xl overflow-hidden border border-slate-800 group">
+            <Image 
+              src="https://images.unsplash.com/photo-1558904541-efa843a96f01?q=80&w=800&auto=format&fit=crop" 
+              alt="Parques y Jardines" 
+              fill 
+              className="object-cover group-hover:scale-110 transition-transform duration-500 filter contrast-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300">Parques y Jardines</p>
+          </div>
+
+          <div className="relative h-64 rounded-xl overflow-hidden border border-slate-800 group">
+            <Image 
+              src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=800&auto=format&fit=crop" 
+              alt="Residencias y comercios" 
+              fill 
+              className="object-cover group-hover:scale-110 transition-transform duration-500 filter contrast-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300">Tratamiento Residencial</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. COTIZADOR INTERACTIVO */}
       <section id="cotizador" className="py-16 bg-slate-950 border-y border-slate-800 px-4">
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="text-center space-y-2">
@@ -105,7 +150,6 @@ export default function Home() {
 
           <form onSubmit={handleCotizar} className="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6 shadow-2xl">
             
-            {/* Paso 1: Tipo de propiedad */}
             <div>
               <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
                 1. Seleccioná el tipo de propiedad
@@ -118,8 +162,8 @@ export default function Home() {
                     onClick={() => setTipoPropiedad(p.nombre)}
                     className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
                       tipoPropiedad === p.nombre 
-                        ? 'border-emerald-500 bg-emerald-950/60 text-white font-bold ring-2 ring-emerald-500/50' 
-                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-emerald-300'
+                        ? 'border-emerald-500 bg-emerald-950/50 text-white font-bold ring-2 ring-emerald-500/50' 
+                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
                     }`}
                   >
                     <span className="text-2xl">{p.icono}</span>
@@ -129,7 +173,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Paso 2: Tipo de plaga */}
             <div>
               <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
                 2. Seleccioná el servicio o problema
@@ -142,8 +185,8 @@ export default function Home() {
                     onClick={() => setTipoPlaga(p.nombre)}
                     className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
                       tipoPlaga === p.nombre 
-                        ? 'border-emerald-500 bg-emerald-950/60 text-white font-bold ring-2 ring-emerald-500/50' 
-                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-emerald-300'
+                        ? 'border-emerald-500 bg-emerald-950/50 text-white font-bold ring-2 ring-emerald-500/50' 
+                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
                     }`}
                   >
                     <span className="text-2xl">{p.icono}</span>
@@ -153,7 +196,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Paso 3: Datos de Contacto */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Nombre (Opcional)</label>
@@ -187,52 +229,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GALERÍA DE TRABAJOS Y TRATAMIENTOS (RECORTE UNIFORME) */}
-      <section className="py-16 px-6 max-w-7xl mx-auto space-y-10">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold text-emerald-400 uppercase tracking-tight">Nuestros Servicios en Acción</h2>
-          <p className="text-slate-400">Personal técnico capacitado y aplicación en todo tipo de ambientes.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galeriaServicios.map((foto) => (
-            <div key={foto.id} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-800 group bg-slate-950 shadow-xl">
-              <Image 
-                src={foto.src} 
-                alt={foto.alt} 
-                fill 
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80"></div>
-              <p className="absolute bottom-4 left-4 font-bold text-sm text-emerald-300 drop-shadow">
-                {foto.titulo}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FOOTER CON LOGO DE HABILITACIONES (ANMAT Y SENASA) */}
-      <footer className="py-12 px-6 bg-slate-950 border-t border-slate-900 text-center space-y-6">
+      {/* 4. LOGOS DE ACREDITACIONES (ANMAT Y SENASA) */}
+      <footer className="py-12 px-6 bg-slate-950 border-t border-slate-900 text-center space-y-8">
         <div className="max-w-4xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
             Empresa Habilitada y Certificada
           </p>
           
-          <div className="flex justify-center items-center pt-2">
-            <div className="relative w-72 md:w-96 h-20 bg-white/95 rounded-xl p-3 flex items-center justify-center shadow-lg border border-slate-800">
-              <Image 
-                src="/images/foto-anmat.png" 
-                alt="Certificaciones ANMAT y SENASA" 
-                fill 
-                className="object-contain p-2"
-              />
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 pt-2">
+            <div className="bg-white p-3 rounded-lg flex items-center justify-center w-36 h-16 shadow-md">
+              <span className="font-black text-blue-900 text-xl tracking-tighter">anmat</span>
+            </div>
+
+            <div className="bg-white p-3 rounded-lg flex items-center justify-center w-36 h-16 shadow-md">
+              <span className="font-black text-sky-700 text-xl tracking-tighter">senasa</span>
             </div>
           </div>
         </div>
 
-        <div className="pt-6 border-t border-slate-900/50 text-xs text-slate-600">
+        <div className="pt-8 border-t border-slate-900/50 text-xs text-slate-600">
           © {new Date().getFullYear()} SGA - Servicios de Gestión Ambiental. Todos los derechos reservados.
         </div>
       </footer>

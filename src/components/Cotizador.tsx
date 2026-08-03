@@ -1,188 +1,161 @@
 "use client";
 
-import { useState } from "react";
-import { jsPDF } from "jspdf";
-import { Calculator, FileText, MessageCircle } from "lucide-react";
-
-const TIPOS_CLIENTE = ["Hogar", "Comercio", "Industria", "Jardines"];
-const TIPOS_PLAGA = ["Roedores", "Cucarachas", "Pulgas", "Chinches de la cama", "Mosquitos"];
-const TELEFONO_SGA = "5491154965979"; 
+import React, { useState } from 'react';
 
 export default function Cotizador() {
-  const [tipo, setTipo] = useState("Hogar");
-  const [plaga, setPlaga] = useState("Roedores");
-  const [medida, setMedida] = useState("");
-  const [resultado, setResultado] = useState<any>(null);
+  const [tipoPropiedad, setTipoPropiedad] = useState('');
+  const [tipoPlaga, setTipoPlaga] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
 
-  // Verificamos si la combinación actual requiere presupuesto personalizado
-  const requierePersonalizado = tipo === "Industria" || tipo === "Jardines" || plaga === "Mosquitos";
-  // Verificamos si la plaga se mide por ambientes o m2
-  const mideEnAmbientes = plaga === "Cucarachas" || plaga === "Chinches de la cama";
+  // Definimos la variable/estado que antes no estaba declarada y causaba el ReferenceError
+  const [requierePersonalized, setRequierePersonalized] = useState(false);
 
-  const calcular = () => {
-    if (requierePersonalizado) {
-      setResultado({ tipo, plaga, isCustom: true });
-      return;
-    }
+  const plagas = [
+    { id: 'cucarachas', nombre: 'Cucarachas', icono: '🪳' },
+    { id: 'roedores', nombre: 'Roedores', icono: '🐀' },
+    { id: 'mosquitos', nombre: 'Mosquitos', icono: '🦟' },
+    { id: 'hormigas', nombre: 'Hormigas/Pulgones', icono: '🐜' },
+    { id: 'jardin', nombre: 'Plagas de Jardín', icono: '🌿' },
+  ];
 
-    const valor = parseFloat(medida);
-    if (isNaN(valor) || valor <= 0) {
-      alert(`Por favor, ingresá la cantidad de \${mideEnAmbientes ? 'ambientes' : 'metros cuadrados'}.`);
-      return;
-    }
+  const propiedades = [
+    { id: 'hogar', nombre: 'Particular / Casa', icono: '🏠' },
+    { id: 'comercio', nombre: 'Comercio / Local', icono: '🏪' },
+    { id: 'fabrica', nombre: 'Fábrica / Empresa', icono: '🏭' },
+    { id: 'parque', nombre: 'Parques / Consorcio', icono: '🌳' },
+  ];
 
-    let precio = 0;
-    let notas = "";
-
-    if (plaga === "Roedores") {
-      precio = 85000;
-      notas = "Precio base para propiedades de hasta 100 m2.";
-    } else if (plaga === "Cucarachas") {
-      precio = 75000;
-      notas = "Precio base para propiedades de hasta 2 ambientes.";
-    } else if (plaga === "Pulgas") {
-      precio = 95000;
-      notas = "Precio base para propiedades de hasta 60 m2.";
-    } else if (plaga === "Chinches de la cama") {
-      precio = 70000 * valor;
-      notas = `Precio calculado a razón de $70.000 por ambiente (\${valor} ambientes).`;
-    }
-
-    setResultado({ 
-      tipo, 
-      plaga, 
-      medida: valor,
-      etiquetaMedida: mideEnAmbientes ? "ambientes" : "m2",
-      total: precio.toFixed(2),
-      notas, // <-- CORREGIDO ACÁ (Antes decía notes)
-      isCustom: false 
-    });
-  };
-
-  const generarPDF = () => {
-    if (!resultado || resultado.isCustom) return;
-    const doc = new jsPDF();
-    
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("SGA SERVICIOS DE GESTION AMBIENTAL", 20, 30);
-    
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(16);
-    doc.text("Presupuesto - Manejo Integral de Plagas", 20, 40);
-
-    doc.setFontSize(12);
-    doc.text("---------------------------------------------------------", 20, 50);
-    doc.text(`Tipo de Cliente: \${resultado.tipo}`, 20, 60);
-    doc.text(`Plaga a tratar: \${resultado.plaga}`, 20, 70);
-    doc.text(`Espacio a cubrir: \${resultado.medida} \${resultado.etiquetaMedida}`, 20, 80);
-    doc.text("---------------------------------------------------------", 20, 90);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(`PRECIO ESTIMADO FINAL: $ \${resultado.total}`, 20, 105);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(resultado.notas, 20, 115);
-    doc.text("Validez del presupuesto: 15 dias.", 20, 125);
-    doc.text("Los precios pueden variar tras la inspeccion tecnica presencial en caso de exceder dimensiones.", 20, 130);
-    doc.text("Gracias por confiar en nuestros servicios.", 20, 140);
-
-    doc.save("Presupuesto_SGA.pdf");
-  };
-
-  const enviarWhatsApp = () => {
-    if (!resultado) return;
-    let texto = "";
-    
-    if (resultado.isCustom) {
-      texto = `Hola SGA! Vengo de la web y necesito un presupuesto personalizado.\n\n🏢 *Sector:* \${resultado.tipo}\n🐛 *Plaga a tratar:* \${resultado.plaga}\n\n¿Me podrían asesorar?`;
+  const handlePropiedadSelect = (nombrePropiedad: string) => {
+    setTipoPropiedad(nombrePropiedad);
+    // Si selecciona empresas, comercios o parques, requiere inspección/presupuesto personalizado
+    if (nombrePropiedad !== 'Particular / Casa') {
+      setRequierePersonalized(true);
     } else {
-      texto = `Hola SGA! Generé un presupuesto en su web y quiero coordinar:\n\n🏢 *Cliente:* \${resultado.tipo}\n🐛 *Plaga:* \${resultado.plaga}\n📏 *Espacio:* \${resultado.medida} \${resultado.etiquetaMedida}\n💰 *Presupuesto Estimado:* \$\${resultado.total}\n\n¿Tienen disponibilidad para una visita?`;
+      setRequierePersonalized(false);
     }
-    
-    window.open(`https://wa.me/\${TELEFONO_SGA}?text=\${encodeURIComponent(texto)}`, '_blank');
+  };
+
+  const handleCotizar = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tipoPropiedad || !tipoPlaga) {
+      alert("Por favor selecciona el tipo de propiedad y la plaga a tratar.");
+      return;
+    }
+
+    // Mensaje preconfigurado para enviar directamente al WhatsApp de SGA
+    const mensaje = encodeURIComponent(
+      `Hola SGA, quisiera solicitar un presupuesto personalizado.\n\n` +
+      `*Nombre:* ${nombre || 'No especificado'}\n` +
+      `*Teléfono:* ${telefono || 'No especificado'}\n` +
+      `*Propiedad:* ${tipoPropiedad}\n` +
+      `*Plaga/Servicio:* ${tipoPlaga}\n` +
+      `*Requiere inspección especial:* ${requierePersonalized ? 'Sí' : 'No'}`
+    );
+
+    window.open(`https://wa.me/5492323357985?text=${mensaje}`, '_blank');
   };
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-xl border border-green-100 max-w-md mx-auto my-12">
-      <div className="text-center mb-6">
-        <Calculator className="w-12 h-12 text-green-600 mx-auto mb-2" />
-        <h3 className="text-2xl font-bold text-green-900">Cotizador Online</h3>
-        <p className="text-gray-600 text-sm">Calculá el costo de tu servicio al instante</p>
+    <div className="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-800 space-y-6 shadow-2xl max-w-3xl mx-auto">
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
+          Solicitá tu Presupuesto
+        </h2>
+        <p className="text-slate-400 text-sm">
+          Completá los pasos para comunicarte directamente con nuestro equipo por WhatsApp.
+        </p>
       </div>
 
-      <div className="space-y-4">
+      <form onSubmit={handleCotizar} className="space-y-6">
+        
+        {/* Paso 1: Tipo de propiedad */}
         <div>
-          <label className="block font-bold text-gray-700 mb-1">Tipo de cliente / Entorno</label>
-          <select className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" value={tipo} onChange={(e) => {setTipo(e.target.value); setResultado(null);}}>
-            {TIPOS_CLIENTE.map(k => <option key={k} value={k}>{k}</option>)}
-          </select>
+          <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+            1. Seleccioná el tipo de propiedad
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {propiedades.map((p) => (
+              <button
+                type="button"
+                key={p.id}
+                onClick={() => handlePropiedadSelect(p.nombre)}
+                className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
+                  tipoPropiedad === p.nombre 
+                    ? 'border-emerald-500 bg-emerald-950/50 text-white font-bold ring-2 ring-emerald-500/50' 
+                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
+                }`}
+              >
+                <span className="text-2xl">{p.icono}</span>
+                <span className="text-xs">{p.nombre}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* Paso 2: Tipo de plaga */}
         <div>
-          <label className="block font-bold text-gray-700 mb-1">Tipo de plaga a tratar</label>
-          <select className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" value={plaga} onChange={(e) => {setPlaga(e.target.value); setResultado(null);}}>
-            {TIPOS_PLAGA.map(k => <option key={k} value={k}>{k}</option>)}
-          </select>
+          <label className="block text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">
+            2. Seleccioná el servicio o problema
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {plagas.map((p) => (
+              <button
+                type="button"
+                key={p.id}
+                onClick={() => setTipoPlaga(p.nombre)}
+                className={`p-4 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-2 ${
+                  tipoPlaga === p.nombre 
+                    ? 'border-emerald-500 bg-emerald-950/50 text-white font-bold ring-2 ring-emerald-500/50' 
+                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
+                }`}
+              >
+                <span className="text-2xl">{p.icono}</span>
+                <span className="text-xs">{p.nombre}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {!requierePersonalizado && (
-          <div>
-            <label className="block font-bold text-gray-700 mb-1">
-              {mideEnAmbientes ? "Cantidad de ambientes" : "Metros cuadrados aprox."}
-            </label>
-            <input 
-              type="number" 
-              className="w-full border-gray-300 rounded-lg p-3 bg-gray-50 border text-gray-900 font-medium focus:ring-green-500 focus:border-green-500" 
-              placeholder={mideEnAmbientes ? "Ej: 2" : "Ej: 100"} 
-              value={medida} 
-              onChange={(e) => setMedida(e.target.value)} 
-            />
+        {/* Aviso si requiere inspección personalizada */}
+        {requierePersonalized && (
+          <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300">
+            ℹ️ Para espacios comerciales, industriales o de gran dimensión se realiza una evaluación previa adaptada.
           </div>
         )}
 
-        <div className="flex gap-2 pt-2">
-          <button onClick={calcular} className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-lg transition">
-            {requierePersonalizado ? "Consultar Disponibilidad" : "Calcular Total"}
-          </button>
-          <button onClick={() => { setMedida(""); setResultado(null); }} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition">
-            Limpiar
-          </button>
+        {/* Paso 3: Datos opcionales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">Nombre (Opcional)</label>
+            <input 
+              type="text" 
+              value={nombre} 
+              onChange={(e) => setNombre(e.target.value)} 
+              placeholder="Tu nombre" 
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">Teléfono (Opcional)</label>
+            <input 
+              type="text" 
+              value={telefono} 
+              onChange={(e) => setTelefono(e.target.value)} 
+              placeholder="Ej: 1122334455" 
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500"
+            />
+          </div>
         </div>
-      </div>
 
-      {resultado && (
-        <div className="mt-6 p-5 bg-green-50 border-2 border-dashed border-green-500 rounded-lg text-center animate-in fade-in zoom-in duration-300">
-          
-          {resultado.isCustom ? (
-            <>
-              <p className="text-xl font-extrabold text-green-700 mb-2">Presupuesto Personalizado</p>
-              <p className="text-sm text-gray-600 mb-4">Por las características de este servicio, necesitamos más detalles para cotizarte correctamente.</p>
-              <button onClick={enviarWhatsApp} className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition">
-                <MessageCircle className="w-5 h-5" /> Contactar por WhatsApp
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="text-sm text-green-800 font-semibold mb-1">Precio Estimado:</p>
-              <p className="text-4xl font-extrabold text-green-700 mb-2">$ {resultado.total}</p>
-              <p className="text-xs text-gray-500 mb-4 font-medium italic">{resultado.notas}</p>
-              
-              <div className="flex flex-col gap-3">
-                <button onClick={generarPDF} className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition">
-                  <FileText className="w-5 h-5" /> Descargar PDF
-                </button>
-                <button onClick={enviarWhatsApp} className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition">
-                  <MessageCircle className="w-5 h-5" /> Enviar por WhatsApp
-                </button>
-              </div>
-            </>
-          )}
-
-        </div>
-      )}
+        {/* Botón de envío a WhatsApp */}
+        <button
+          type="submit"
+          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-xl transition-all flex items-center justify-center gap-3 uppercase tracking-wider text-sm shadow-lg shadow-emerald-900/30"
+        >
+          <span className="text-xl">💬</span> Enviar consulta y cotizar por WhatsApp
+        </button>
+      </form>
     </div>
   );
 }
